@@ -15,7 +15,7 @@ class WebpackBasicSourcemap {
 			|| compiler.options.outputPath;
 		//Log("Output path) " + outputPath);
 		
-		compiler.plugin("compilation", (compilation, params)=> {
+		/*compiler.plugin("compilation", (compilation, params)=> {
 			// add filename banner before each module's text
 			compilation.plugin("optimize-chunk-assets", (chunks, callback)=> {
 				chunks.forEach(chunk=> {
@@ -25,7 +25,11 @@ class WebpackBasicSourcemap {
 				});
 				callback();
 			});
+		});*/
 			
+		//compiler.plugin("compilation", (compilation, params)=> {
+		compiler.plugin("done", stats=> {
+			var compilation = stats.compilation;
 			/*compiler.plugin("after-compile", compilation=> {
 				for (let bundleFileName of this.options.bundleFileNames)
 					this.AddBasicSourceMap(compilation, path.resolve(outputPath, bundleFileName));
@@ -71,16 +75,9 @@ class WebpackBasicSourcemap {
 		var appendText = "\n\nwindow.ModuleFileStartLines_" + fileNameWithoutExtension + " = " + JSON.stringify(moduleStartLines);
 		
 		if (!hasOldBasicSourceMap) {
-			/*//fs.appendFileSync(filePath, appendText, {encoding: "utf8"});
-			// delay a bit (i.e. run after this stack completes), since otherwise our append doesn't apply (there must be a writeFile call after this area of code runs)
-			setTimeout(()=>fs.appendFileSync(filePath, appendText, {encoding: "utf8"}), 0);*/
-			
+			//fs.appendFileSync(filePath, appendText, {encoding: "utf8"});
 			var newText = oldText + appendText;
 			fs.writeFileSync(filePath, newText, {encoding: "utf8"});
-			// try again a bit later, since sometimes (usually/always) doesn't work the first time
-			//setTimeout(()=>fs.writeFileSync(filePath, newText, {encoding: "utf8"}), 1000);
-			// delay a bit (i.e. run after this stack completes), since otherwise our writeFile doesn't apply (there must be a writeFile call after this area of code runs)
-			setTimeout(()=>fs.writeFileSync(filePath, newText, {encoding: "utf8"}), 0);
 		}
 		else {
 			var oldText_withoutBasicSourceMap = lines.slice(0, lines.length - 2).join("\n");
@@ -91,8 +88,5 @@ class WebpackBasicSourcemap {
 		return moduleFileCount;
 	}
 }
-
-/*WebpackBasicSourcemap.prototype.apply = function(compiler) {
-};*/
 
 module.exports = WebpackBasicSourcemap;
