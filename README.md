@@ -1,5 +1,5 @@
 # webpack-basic-sourcemap
-Parses module start-lines in bundle, embeds the info into the JS, then adds an \<Error\>.Stack getter which calculated the original files/lines.
+Parses module start-lines in bundle, embeds the info into the JS, then adds an \<Error\>.Stack getter which calculates the original files/lines.
 
 It's an alternative to regular source-maps, for when you need the source stack-traces in the JS code itself, and synchronously.
 
