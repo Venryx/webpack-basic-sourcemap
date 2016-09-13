@@ -47,12 +47,19 @@ Object.defineProperty(Array.prototype, "Last", {enumerable: false, value: functi
     return this[this.length - 1];
 }});
 
+function GetSourceStackEntryInfo(bundleName, bundleLine) {
+	var bundle_modStartLinesInBundle = window["ModuleFileStartLines_" + bundleName];
+	var {name: modulePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= bundleLine);
+	var moduleFileName = modulePath.substr(modulePath.lastIndexOf("/") + 1);
+	var moduleLine = bundleLine - moduleStartLine;
+	return {modulePath, moduleFileName, moduleLine};
+}
 // gets the source stack-trace of the error (i.e. the stack-trace as it would be without the js-files being bundled into one)
 Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: function() {
-    var options = {
-		bundlePath: true, // false for just file-name
-		modulePath: true, // false for just file-name
-    };
+	var options = {
+		bundlePath: true, // turn off for just file-name
+		modulePath: true, // turn off for just file-name
+	};
 
 	var rawStack = this.stack;
 	var oldLines = rawStack.split("\n");
@@ -60,15 +67,13 @@ Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: functio
 		let lineParts = oldLine.match(/^(.+?)\((.+?\.js):([0-9]+)(?::([0-9]+))?\)$/);
 		if (lineParts == null) return oldLine;
 
-		let [, beforeText, bundlePath, rawLine, rawColumn] = lineParts;
-		let bundleName = bundlePath.substring(bundlePath.lastIndexOf("/") + 1, bundlePath.lastIndexOf("."));
-		let bundle_modStartLinesInBundle = window["ModuleFileStartLines_" + bundleName];
+		let [, beforeText, bundlePath, bundleLine, bundleColumn] = lineParts;
+		let bundleFileName = bundlePath.substring(bundlePath.lastIndexOf("/") + 1);
+		let bundleName = bundleFileName.substring(0, bundleFileName.lastIndexOf("."));
 
-		let {name: moduleFilePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= rawLine);
-		let moduleFileName = moduleFilePath.substr(moduleFilePath.lastIndexOf("/") + 1);
-		let sourceLine = rawLine - moduleStartLine;
-		return `${beforeText}(${(options.bundlePath ? encodeURI(bundlePath) : bundleName)}:${rawLine}${rawColumn ? ":" + rawColumn : ""})${""
-				} (${(options.modulePath ? "file:///" + encodeURI(moduleFilePath) : moduleFileName)}:${sourceLine}${rawColumn ? ":" + rawColumn : ""})`;
+		let {modulePath, moduleFileName, moduleLine} = GetSourceStackEntryInfo(bundleName, bundleLine);
+		return `${beforeText}(${(options.bundlePath ? encodeURI(bundlePath) : bundleFileName)}:${bundleLine}${bundleColumn ? ":" + bundleColumn : ""})${""
+				} (${(options.modulePath ? "file:///" + encodeURI(modulePath) : moduleFileName)}:${moduleLine}${bundleColumn ? ":" + bundleColumn : ""})`;
 	});
 	return newLines.join("\n");
 }});
