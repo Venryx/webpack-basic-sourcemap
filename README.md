@@ -1,5 +1,15 @@
 # webpack-basic-sourcemap
-Parses module start-lines from bundle, then modifies error stack-traces to show calculated original file-lines.
+Parses module start-lines in bundle, embeds the info into the JS, then adds an <Error>.Stack getter which calculated the original files/lines.
+
+It's an alternative to regular source-maps, for when you need the source stack-traces in the JS code itself, and synchronously.
+
+Note that if you're using a transpiler in Webpack, you need to make sure it's set to retain the line-breaks of the original files.  
+For Babel, this means creating a `.babelrc` file with the following setting:
+```
+{
+	"retainLines":true
+}
+```
 
 ## Usage
 1) Run `npm install --save webpack-basic-sourcemap`.  
@@ -60,3 +70,7 @@ Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: functio
 ```
 error.Stack
 ```
+
+## Alternatives
+If you don't need the source stack-trace synchronously, you can use a library that calculates source stack-traces from regular source-maps:
+* https://github.com/stacktracejs/stacktrace.js
