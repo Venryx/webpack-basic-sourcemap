@@ -58,13 +58,21 @@ class WebpackBasicSourcemap {
 		for (let [lineIndex, line] of lines.entries()) {
 			var moduleIDMatch = line.match(/^\/\* ([0-9]+) \*\/$/);
 			if (moduleIDMatch) {
+				// offset by 4, since there's some boilerplate-code lines (3 for module-declaration comment, 1 for blank line just after)
+				lineIndex += 4;
+				
 				var moduleID = moduleIDMatch[1];
 				var module = modules.find(a=>a.id == moduleID);
-				var moduleFilePath = module.request ? module.request.substr(module.request.lastIndexOf(":") - 1) : "[no path (entry file)]";
-				moduleFilePath = moduleFilePath.replace(/\\/g, "/"); // standardize output to use /
-				//var moduleFileName = /([A-Za-z_]+)\.[A-Za-z]$/.exec(moduleFilePath)[1];
-				// offset by 4, since there's some boilerplate-code lines (3 for module-declaration comment, 1 for blank line just after)
-				moduleStartLines[moduleFilePath] = lineIndex + 4;
+				if (module) {
+					var moduleFilePath = module.request ? module.request.substr(module.request.lastIndexOf(":") - 1) : "[no path (entry file)]";
+					moduleFilePath = moduleFilePath.replace(/\\/g, "/"); // standardize output to use /
+					//var moduleFileName = /([A-Za-z_]+)\.[A-Za-z]$/.exec(moduleFilePath)[1];
+					moduleStartLines[moduleFilePath] = lineIndex;
+				}
+				else {
+					Log(`Warning: Can't find module with ID: ${moduleID}`);
+					moduleStartLines["unknownModule" + moduleID] = lineIndex;
+				}
 			}
 			
 			if (line.startsWith("window.ModuleFileStartLines_"))

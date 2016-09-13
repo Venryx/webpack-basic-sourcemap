@@ -49,7 +49,14 @@ Object.defineProperty(Array.prototype, "Last", {enumerable: false, value: functi
 
 function GetSourceStackEntryInfo(bundleName, bundleLine) {
 	var bundle_modStartLinesInBundle = window["ModuleFileStartLines_" + bundleName];
-	var {name: modulePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= bundleLine);
+	if (bundle_modStartLinesInBundle == null)
+		return {modulePath: `[Can't find bundle with name: ${bundleName}]`, moduleFileName: `[Can't find bundle with name: ${bundleName}]`};
+    var module = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= bundleLine);
+	if (module == null)
+		return {modulePath: `[Can't find module for bundle ${bundleName}, line: ${bundleLine}]`,
+			moduleFileName: `[Can't find module for bundle ${bundleName}, line: ${bundleLine}]`};
+	
+	var {name: modulePath, value: moduleStartLine} = module;
 	var moduleFileName = modulePath.substr(modulePath.lastIndexOf("/") + 1);
 	var moduleLine = bundleLine - moduleStartLine;
 	return {modulePath, moduleFileName, moduleLine};
