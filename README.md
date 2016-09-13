@@ -5,7 +5,7 @@ It's an alternative to regular source-maps, for when you need the source stack-t
 
 ## Notes
 
-Note that if you're using a transpiler in Webpack, you need to make sure it's set to retain the line-breaks of the original files.
+* If you're using a transpiler in Webpack, you need to make sure it's set to retain the line-breaks of the original files.
 
 For Babel, this means creating a `.babelrc` file with the following setting:
 ```
