@@ -51,7 +51,7 @@ Object.defineProperty(Array.prototype, "Last", {enumerable: false, value: functi
 Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: function() {
 	var rawStack = this.stack;
 	var oldLines = rawStack.split("\n");
-	var newLines = oldLines.Select(oldLine=> {
+	var newLines = oldLines.map(oldLine=> {
 		let lineParts = oldLine.match(/^(.+?)\((.+?)\.js:([0-9]+)(?::([0-9]+))?\)$/);
 		if (lineParts == null) return oldLine;
 
