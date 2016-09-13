@@ -49,22 +49,24 @@ Object.defineProperty(Array.prototype, "Last", {enumerable: false, value: functi
 
 // gets the source stack-trace of the error (i.e. the stack-trace as it would be without the js-files being bundled into one)
 Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: function() {
+	var filePaths = true; // turn off if you want to just show the file-names
+
 	var rawStack = this.stack;
 	var oldLines = rawStack.split("\n");
 	var newLines = oldLines.map(oldLine=> {
-		let lineParts = oldLine.match(/^(.+?)\((.+?)\.js:([0-9]+)(?::([0-9]+))?\)$/);
+		let lineParts = oldLine.match(/^(.+?)\((.+?\.js):([0-9]+)(?::([0-9]+))?\)$/);
 		if (lineParts == null) return oldLine;
 
 		let [, beforeText, bundlePath, rawLine, rawColumn] = lineParts;
-		let bundleName = bundlePath.substr(bundlePath.lastIndexOfAny("/", "\\") + 1);
+		let bundleName = bundlePath.substring(bundlePath.lastIndexOf("/") + 1, bundlePath.lastIndexOf("."));
 		//let bundle_modStartLinesInBundle = GetBundleInfo(bundleName).moduleFileStartLines_props_sortedByStartLine;
 		let bundle_modStartLinesInBundle = window["ModuleFileStartLines_" + bundleName];
 
 		let {name: moduleFilePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= rawLine);
-		let moduleFileName = moduleFilePath.substr(moduleFilePath.lastIndexOfAny("/", "\\") + 1);
+		let moduleFileName = moduleFilePath.substr(moduleFilePath.lastIndexOf("/") + 1);
 		let sourceLine = rawLine - moduleStartLine;
-		return `${beforeText}(${bundleName}.js:${rawLine}${rawColumn ? ":" + rawColumn : ""})${""
-				} (${moduleFileName}:${sourceLine}${rawColumn ? ":" + rawColumn : ""})`;
+		return `${beforeText}(${(filePaths ? bundlePath : bundleName)}:${rawLine}${rawColumn ? ":" + rawColumn : ""})${""
+				} (${(filePaths ? moduleFilePath : moduleFileName)}:${sourceLine}${rawColumn ? ":" + rawColumn : ""})`;
 	});
 	return newLines.join("\n");
 }});

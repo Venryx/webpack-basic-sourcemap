@@ -71,9 +71,8 @@ class WebpackBasicSourcemap {
 		}
 		
 		Log("Adding basic source-map to) " + filePath);
-		//debugger;
 		
-		var fileNameWithoutExtension = path.basename(filePath, ".js");
+		var fileNameWithoutExtension = path.basename(filePath, ".js").replace(/\\/g, "/"); // standardize output to use /
 		var appendText = "\n\nwindow.ModuleFileStartLines_" + fileNameWithoutExtension + " = " + JSON.stringify(moduleStartLines);
 		
 		if (!hasOldBasicSourceMap) {
@@ -82,9 +81,9 @@ class WebpackBasicSourcemap {
 			setTimeout(()=>fs.appendFileSync(filePath, appendText, {encoding: "utf8"}), 0);*/
 			
 			var newText = oldText + appendText;
-			//fs.writeFileSync(filePath, newText, {encoding: "utf8"});
+			fs.writeFileSync(filePath, newText, {encoding: "utf8"});
 			// delay a bit (i.e. run after this stack completes), since otherwise our writeFile doesn't apply (there must be a writeFile call after this area of code runs)
-			setTimeout(()=>fs.writeFileSync(filePath, newText, {encoding: "utf8"}), 0);
+			//setTimeout(()=>fs.writeFileSync(filePath, newText, {encoding: "utf8"}), 0);
 		}
 		else {
 			var oldText_withoutBasicSourceMap = lines.slice(0, lines.length - 2).join("\n");
