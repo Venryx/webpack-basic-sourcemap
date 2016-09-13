@@ -1,0 +1,23 @@
+{
+  "name": "webpack-basic-sourcemap",
+  "version": "1.0.0",
+  "description": "Parses module start-lines from bundle, then modifies error stack-traces to show calculated original file-lines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Venryx/webpack-basic-sourcemap.git"
+  },
+  "keywords": [
+    "webpack",
+    "sourcemap"
+  ],
+  "author": "Venryx",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Venryx/webpack-basic-sourcemap/issues"
+  },
+  "homepage": "https://github.com/Venryx/webpack-basic-sourcemap"
+}
