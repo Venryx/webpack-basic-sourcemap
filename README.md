@@ -3,7 +3,10 @@ Parses module start-lines in bundle, embeds the info into the JS, then adds an <
 
 It's an alternative to regular source-maps, for when you need the source stack-traces in the JS code itself, and synchronously.
 
-Note that if you're using a transpiler in Webpack, you need to make sure it's set to retain the line-breaks of the original files.  
+## Notes
+
+Note that if you're using a transpiler in Webpack, you need to make sure it's set to retain the line-breaks of the original files.
+
 For Babel, this means creating a `.babelrc` file with the following setting:
 ```
 {
