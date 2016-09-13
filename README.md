@@ -50,8 +50,8 @@ Object.defineProperty(Array.prototype, "Last", {enumerable: false, value: functi
 // gets the source stack-trace of the error (i.e. the stack-trace as it would be without the js-files being bundled into one)
 Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: function() {
     var options = {
-		bundlePath: true, // turn off for just file-name
-		modulePath: true, // turn off for just file-name
+		bundlePath: true, // false for just file-name
+		modulePath: true, // false for just file-name
     };
 
 	var rawStack = this.stack;
@@ -68,7 +68,7 @@ Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: functio
 		let {name: moduleFilePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= rawLine);
 		let moduleFileName = moduleFilePath.substr(moduleFilePath.lastIndexOf("/") + 1);
 		let sourceLine = rawLine - moduleStartLine;
-		return `${beforeText}(${(options.bundlePath ? "file:///" + encodeURI(bundlePath) : bundleName)}:${rawLine}${rawColumn ? ":" + rawColumn : ""})${""
+		return `${beforeText}(${(options.bundlePath ? encodeURI(bundlePath) : bundleName)}:${rawLine}${rawColumn ? ":" + rawColumn : ""})${""
 				} (${(options.modulePath ? "file:///" + encodeURI(moduleFilePath) : moduleFileName)}:${sourceLine}${rawColumn ? ":" + rawColumn : ""})`;
 	});
 	return newLines.join("\n");
