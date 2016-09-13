@@ -61,6 +61,7 @@ class WebpackBasicSourcemap {
 				var moduleID = moduleIDMatch[1];
 				var module = modules.find(a=>a.id == moduleID);
 				var moduleFilePath = module.request ? module.request.substr(module.request.lastIndexOf(":") - 1) : "[no path (entry file)]";
+				moduleFilePath = moduleFilePath.replace(/\\/g, "/"); // standardize output to use /
 				//var moduleFileName = /([A-Za-z_]+)\.[A-Za-z]$/.exec(moduleFilePath)[1];
 				// offset by 4, since there's some boilerplate-code lines (3 for module-declaration comment, 1 for blank line just after)
 				moduleStartLines[moduleFilePath] = lineIndex + 4;
@@ -72,7 +73,7 @@ class WebpackBasicSourcemap {
 		
 		Log("Adding basic source-map to) " + filePath);
 		
-		var fileNameWithoutExtension = path.basename(filePath, ".js").replace(/\\/g, "/"); // standardize output to use /
+		var fileNameWithoutExtension = path.basename(filePath, ".js");
 		var appendText = "\n\nwindow.ModuleFileStartLines_" + fileNameWithoutExtension + " = " + JSON.stringify(moduleStartLines);
 		
 		if (!hasOldBasicSourceMap) {
