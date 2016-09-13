@@ -58,7 +58,7 @@ Object.defineProperty(Error.prototype, "Stack", {enumerable: false, get: functio
 		let [, beforeText, bundlePath, rawLine, rawColumn] = lineParts;
 		let bundleName = bundlePath.substr(bundlePath.lastIndexOfAny("/", "\\") + 1);
 		//let bundle_modStartLinesInBundle = GetBundleInfo(bundleName).moduleFileStartLines_props_sortedByStartLine;
-		let bundle_modStartLinesInBundle = g["ModuleFileStartLines_" + bundleName];
+		let bundle_modStartLinesInBundle = window["ModuleFileStartLines_" + bundleName];
 
 		let {name: moduleFilePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= rawLine);
 		let moduleFileName = moduleFilePath.substr(moduleFilePath.lastIndexOfAny("/", "\\") + 1);
