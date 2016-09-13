@@ -16,5 +16,47 @@ var WebpackBasicSourcemap = require("webpack-basic-sourcemap");
 ```
 3) Add the following to your JS start file:  
 ```
-TODO
+// general polyfills
+Object.prototype._AddGetter_Inline = function Props() {
+	var result = [];
+	var i = 0;
+	for (var propName in this)
+		result.push({index: i++, name: propName, value: this[propName]});
+	return result;
+};
+Array.prototype._AddFunction_Inline = function Last(matchFunc = null) {
+	if (matchFunc) {
+        for (var i = this.length - 1; i >= 0; i--)
+            if (matchFunc.call(this[i], this[i]))
+                return this[i];
+        return null;
+    }
+    return this[this.length - 1];
+};
+
+// gets the source stack-trace of the error (i.e. the stack-trace as it would be without the js-files being bundled into one)
+Error.prototype._AddGetter_Inline = function Stack() {
+    var rawStack = this.stack;
+    var oldLines = rawStack.split("\n");
+    var newLines = oldLines.Select(oldLine=> {
+		let lineParts = oldLine.match(/^(.+?)\((.+?)\.js:([0-9]+)(?::([0-9]+))?\)$/);
+        if (lineParts == null) return oldLine;
+
+		let [, beforeText, bundlePath, rawLine, rawColumn] = lineParts;
+		let bundleName = bundlePath.substr(bundlePath.lastIndexOfAny("/", "\\") + 1);
+        //let bundle_modStartLinesInBundle = GetBundleInfo(bundleName).moduleFileStartLines_props_sortedByStartLine;
+		let bundle_modStartLinesInBundle = g["ModuleFileStartLines_" + bundleName];
+
+        let {name: moduleFilePath, value: moduleStartLine} = bundle_modStartLinesInBundle.Props.Last(a=>a.value <= rawLine);
+        let moduleFileName = moduleFilePath.substr(moduleFilePath.lastIndexOfAny("/", "\\") + 1);
+        let sourceLine = rawLine - moduleStartLine;
+		return `${beforeText}(${bundleName}.js:${rawLine}${rawColumn ? ":" + rawColumn : ""})${""
+				} (${moduleFileName}:${sourceLine}${rawColumn ? ":" + rawColumn : ""})`;
+    });
+    return newLines.join("\n");
+};
+```
+4) Whenever you need the source stack-trace of an error, just call:
+```
+error.Stack
 ```

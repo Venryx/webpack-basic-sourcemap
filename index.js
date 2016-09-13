@@ -54,7 +54,6 @@ class WebpackBasicSourcemap {
 		var lines = oldText.split("\n");
 		
 		var moduleStartLines = {};
-		var moduleFileCount = 0;
 		var hasOldBasicSourceMap = false;
 		for (let [lineIndex, line] of lines.entries()) {
 			var moduleIDMatch = line.match(/^\/\* ([0-9]+) \*\/$/);
@@ -65,7 +64,6 @@ class WebpackBasicSourcemap {
 				//var moduleFileName = /([A-Za-z_]+)\.[A-Za-z]$/.exec(moduleFilePath)[1];
 				// offset by 4, since there's some boilerplate-code lines (3 for module-declaration comment, 1 for blank line just after)
 				moduleStartLines[moduleFilePath] = lineIndex + 4;
-				moduleFileCount++;
 			}
 			
 			if (line.startsWith("window.ModuleFileStartLines_"))
@@ -93,8 +91,6 @@ class WebpackBasicSourcemap {
 			var newText = oldText_withoutBasicSourceMap + appendText;
 			fs.writeFileSync(filePath, newText, {encoding: "utf8"});
 		}
-		
-		return moduleFileCount;
 	}
 }
 
