@@ -5,7 +5,7 @@ Parses module start-lines from bundle, then modifies error stack-traces to show 
 1) Run `npm install --save webpack-basic-sourcemap`.  
 2) Add the following to your `webpack.config` file:  
 ```
-var WebpackBasicSourcemap = require("./node_modules_CustomExternal/webpack-basic-sourcemap");
+var WebpackBasicSourcemap = require("webpack-basic-sourcemap");
 // ...
 // module.exports = {
 // ...
@@ -14,7 +14,7 @@ var WebpackBasicSourcemap = require("./node_modules_CustomExternal/webpack-basic
 // ...
 //};
 ```
-3) Add the following to a JS file in your project:  
+3) Add the following to your JS start file:  
 ```
 TODO
 ```

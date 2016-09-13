@@ -27,22 +27,26 @@ class WebpackBasicSourcemap {
 			});
 		});*/
 			
-		//compiler.plugin("compilation", (compilation, params)=> {
-		compiler.plugin("done", stats=> {
+		/*compiler.plugin("compilation", (compilation, params)=> {
 			var compilation = stats.compilation;
 			/*compiler.plugin("after-compile", compilation=> {
 				for (let bundleFileName of this.options.bundleFileNames)
 					this.AddBasicSourceMap(compilation, path.resolve(outputPath, bundleFileName));
-			});*/
+			});*#/
 			// add JSON object to end of bundle, that runs and tells the modules what line they each started at
 			compilation.plugin("after-optimize-chunk-assets", chunks=> {
 				/*for (let bundleFileName of this.options.bundleFileNames) {
 					var chunk = chunks.find(a=>a.name == path.basename(bundleFileName, ".js"));
 					this.AddBasicSourceMap(chunk.modules, path.resolve(outputPath, bundleFileName + ".js"));
-				}*/
+				}*#/
 				for (let chunk of chunks)
 					this.AddBasicSourceMap(chunk.modules, path.resolve(outputPath, chunk.name + ".js"));
 			});
+		});*/
+			
+		compiler.plugin("done", stats=> {
+			for (let chunk of stats.compilation.chunks)
+				this.AddBasicSourceMap(chunk.modules, path.resolve(outputPath, chunk.name + ".js"));
 		});
 	}
 	AddBasicSourceMap(modules, filePath) {
@@ -75,9 +79,14 @@ class WebpackBasicSourcemap {
 		var appendText = "\n\nwindow.ModuleFileStartLines_" + fileNameWithoutExtension + " = " + JSON.stringify(moduleStartLines);
 		
 		if (!hasOldBasicSourceMap) {
-			//fs.appendFileSync(filePath, appendText, {encoding: "utf8"});
+			/*//fs.appendFileSync(filePath, appendText, {encoding: "utf8"});
+			// delay a bit (i.e. run after this stack completes), since otherwise our append doesn't apply (there must be a writeFile call after this area of code runs)
+			setTimeout(()=>fs.appendFileSync(filePath, appendText, {encoding: "utf8"}), 0);*/
+			
 			var newText = oldText + appendText;
-			fs.writeFileSync(filePath, newText, {encoding: "utf8"});
+			//fs.writeFileSync(filePath, newText, {encoding: "utf8"});
+			// delay a bit (i.e. run after this stack completes), since otherwise our writeFile doesn't apply (there must be a writeFile call after this area of code runs)
+			setTimeout(()=>fs.writeFileSync(filePath, newText, {encoding: "utf8"}), 0);
 		}
 		else {
 			var oldText_withoutBasicSourceMap = lines.slice(0, lines.length - 2).join("\n");
