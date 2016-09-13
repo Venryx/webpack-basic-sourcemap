@@ -1,6 +1,6 @@
 {
   "name": "webpack-basic-sourcemap",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Parses module start-lines from bundle, then modifies error stack-traces to show calculated original file-lines.",
   "main": "index.js",
   "scripts": {
