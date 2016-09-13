@@ -75,5 +75,5 @@ error.Stack
 ```
 
 ## Alternatives
-If you don't need the source stack-trace synchronously, you can use a library that calculates source stack-traces from regular source-maps:
+If you don't need the source stack-trace synchronously, you can use a library that calculates source stack-traces from regular source-maps: (though this takes longer)
 * https://github.com/stacktracejs/stacktrace.js
