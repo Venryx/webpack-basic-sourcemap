@@ -1,4 +1,14 @@
 # webpack-basic-sourcemap
+
+**DEPRECATED**
+
+Instead, use the solution here: https://github.com/stacktracejs/stacktrace.js/issues/188
+
+I might make a second version of this that includes line-numbers as comments in addition to file start-lines (based on a project-specific solution),
+	which seems to yield better performance than the solution above; however, for now, the above is recommended over this project.
+
+## Description
+
 Parses module start-lines in bundle, embeds the info into the JS, then adds an \<Error\>.Stack getter which calculates the original files/lines.
 
 It's an alternative to regular source-maps, for when you need the source stack-traces in the JS code itself, and synchronously.
